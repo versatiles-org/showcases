@@ -4,9 +4,9 @@ import { fileURLToPath } from 'url';
 import sharp from 'sharp';
 
 const ROOT = resolve(fileURLToPath(import.meta.url), '../..');
-const THUMBS_DIR = resolve(ROOT, 'public/showcases');
-const LOGO_PATH = resolve(ROOT, 'public/versatiles.svg');
-const OUTPUT_PATH = resolve(ROOT, 'public/showcases-social.jpg');
+const THUMBS_DIR = resolve(ROOT, 'public');
+const LOGO_PATH = resolve(ROOT, 'assets/versatiles.svg');
+const OUTPUT_PATH = resolve(ROOT, 'public/social.jpg');
 
 const WIDTH = 1200;
 const HEIGHT = 675;
@@ -34,10 +34,10 @@ function bands(total: number, count: number): { offset: number; size: number }[]
 }
 
 /**
- * Builds the social media preview image for /showcases/: a wall of showcase
+ * Builds the social media preview image: a wall of showcase
  * screenshots, dimmed towards the centre, with the VersaTiles logo in front.
  *
- * Runs after build:showcase-images, which produces the 800x450 thumbnails.
+ * Runs after build:images, which produces the 800x450 thumbnails.
  */
 async function main() {
 	const thumbs = existsSync(THUMBS_DIR)
@@ -99,7 +99,7 @@ async function main() {
 		.jpeg({ quality: JPEG_QUALITY, mozjpeg: true })
 		.toFile(OUTPUT_PATH);
 
-	console.log(`✓ showcases-social.jpg (${cols}x${cols} of ${thumbs.length} screenshots)`);
+	console.log(`✓ social.jpg (${cols}x${cols} of ${thumbs.length} screenshots)`);
 }
 
 main().catch((error: unknown) => {

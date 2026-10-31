@@ -1,0 +1,80 @@
+name: CI
+
+on:
+  # Other branches are covered by `pull_request`; running on every push as well
+  # would check each pull request twice.
+  push:
+    branches:
+      - main
+  # Picks up changes to the page template on versatiles.org.
+  schedule:
+    - cron: '0 6 * * 0' # Weekly on Sunday at 06:00 UTC
+  pull_request:
+  workflow_dispatch:
+  repository_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check format
+        run: npm run format:check
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Check types
+        run: npm run lint:types
+
+      - name: Update page template
+        if: github.event_name != 'pull_request'
+        run: npm run build:html
+
+      - name: Build site
+        run: npm run build
+
+      - name: Upload artifact
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: ./dist
+
+  # Publishes to https://versatiles.org/showcases/. Needs GitHub Pages enabled for this
+  # repository and the repository variable DEPLOY_PAGES set to "true".
+  deploy:
+    needs: build
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && vars.DEPLOY_PAGES == 'true'
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

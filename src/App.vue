@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
-import { data } from '../../../showcases/index.data';
+import data from 'virtual:showcases';
 
 const searchQuery = ref('');
 const selectedCountry = ref<string | null>(null);
@@ -116,6 +116,9 @@ function domain(url: string) {
 
 <template>
 	<div class="showcases">
+		<h1>Showcases</h1>
+		<p class="intro">Here is a collection of projects and applications using VersaTiles:</p>
+
 		<div class="filters-bar">
 			<input
 				v-model="searchQuery"
@@ -183,6 +186,16 @@ function domain(url: string) {
 </template>
 
 <style scoped>
+.showcases h1 {
+	margin: 3rem auto 0.75rem;
+}
+
+/* The site styles every `main p` justified, which suits neither of these short lines. */
+.intro {
+	text-align: center;
+	margin-bottom: 2rem;
+}
+
 /* Filters */
 .filters-bar {
 	display: flex;
@@ -206,7 +219,7 @@ function domain(url: string) {
 .filter-label {
 	font-size: 13px;
 	font-weight: 600;
-	color: var(--vp-c-text-2);
+	color: var(--text-2);
 	margin-right: 8px;
 }
 
@@ -217,33 +230,34 @@ function domain(url: string) {
 	border-radius: 16px;
 	font-size: 13px;
 	font-weight: 500;
-	border: 1px solid var(--vp-c-divider);
-	background: var(--vp-c-bg-soft);
-	color: var(--vp-c-text-2);
+	border: 1px solid var(--divider);
+	background: var(--bg-soft);
+	color: var(--text-2);
+	font-family: inherit;
 	cursor: pointer;
 	transition: all 0.2s;
 	line-height: 1.4;
 }
 
 .pill:hover {
-	border-color: var(--vp-c-brand-1);
-	color: var(--vp-c-brand-1);
+	border-color: var(--accent);
+	color: var(--accent-text);
 }
 
 .pill.active {
-	background: var(--vp-c-brand-1);
-	/* white in light mode, near-black in dark mode — brand-1 flips with the theme */
-	color: var(--vp-c-neutral-inverse);
-	border-color: var(--vp-c-brand-1);
+	background: var(--accent);
+	color: var(--on-accent);
+	border-color: var(--accent);
 }
 
 .search-input {
 	padding: 4px 12px;
 	border-radius: 16px;
 	font-size: 13px;
-	border: 1px solid var(--vp-c-divider);
-	background: var(--vp-c-bg-soft);
-	color: var(--vp-c-text-1);
+	border: 1px solid var(--divider);
+	background: var(--bg-soft);
+	color: var(--text-1);
+	font-family: inherit;
 	outline: none;
 	line-height: 1.4;
 	flex: 1;
@@ -251,27 +265,27 @@ function domain(url: string) {
 }
 
 .search-input::placeholder {
-	color: var(--vp-c-text-3);
+	color: var(--text-3);
 }
 
 .search-input:focus {
-	border-color: var(--vp-c-brand-1);
+	border-color: var(--accent);
 }
 
 .filter-select {
 	padding: 4px 12px;
 	border-radius: 16px;
 	font-size: 13px;
-	border: 1px solid var(--vp-c-divider);
-	background: var(--vp-c-bg-soft);
-	color: var(--vp-c-text-2);
+	border: 1px solid var(--divider);
+	background: var(--bg-soft);
+	color: var(--text-2);
 	outline: none;
 	line-height: 1.4;
 	cursor: pointer;
 }
 
 .filter-select:focus {
-	border-color: var(--vp-c-brand-1);
+	border-color: var(--accent);
 }
 
 .clear-btn {
@@ -279,7 +293,7 @@ function domain(url: string) {
 	/* Same line-height as the sibling controls: without it the button inherits the
 	   page's 24px and grows the bar, shifting the whole gallery down as it appears. */
 	line-height: 1.4;
-	color: var(--vp-c-text-3);
+	color: var(--text-3);
 	background: none;
 	border: none;
 	cursor: pointer;
@@ -288,13 +302,14 @@ function domain(url: string) {
 }
 
 .clear-btn:hover {
-	color: var(--vp-c-text-1);
+	color: var(--text-1);
 }
 
 .result-count {
 	font-size: 14px;
-	color: var(--vp-c-text-2);
-	margin-bottom: 16px;
+	color: var(--text-2);
+	text-align: left;
+	margin: 16px 0;
 }
 
 /* Card grid */
@@ -312,8 +327,8 @@ function domain(url: string) {
 	display: flex;
 	flex-direction: column;
 	border-radius: 12px;
-	border: 1px solid var(--vp-c-divider);
-	background: var(--vp-c-bg-soft);
+	border: 1px solid var(--divider);
+	background: var(--bg-soft);
 	overflow: hidden;
 	text-decoration: none;
 	color: inherit;
@@ -323,14 +338,14 @@ function domain(url: string) {
 }
 
 .card:hover {
-	border-color: var(--vp-c-brand-1);
+	border-color: var(--accent);
 	box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 }
 
 .card-thumb {
 	aspect-ratio: 16 / 9;
 	overflow: hidden;
-	background: var(--vp-c-bg-alt);
+	background: var(--bg-alt);
 }
 
 .card-thumb img {
@@ -343,7 +358,7 @@ function domain(url: string) {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	color: var(--vp-c-text-3);
+	color: var(--text-3);
 }
 
 .card-thumb.placeholder svg {
@@ -362,7 +377,7 @@ function domain(url: string) {
 .card-title {
 	font-size: 15px;
 	font-weight: 600;
-	color: var(--vp-c-text-1);
+	color: var(--text-1);
 	line-height: 1.4;
 }
 
@@ -375,12 +390,12 @@ function domain(url: string) {
 .card-source {
 	font-size: 13px;
 	font-weight: 500;
-	color: var(--vp-c-brand-1);
+	color: var(--accent-text);
 }
 
 .card-desc {
 	font-size: 13px;
-	color: var(--vp-c-text-2);
+	color: var(--text-2);
 	line-height: 1.5;
 	flex: 1;
 }
@@ -396,53 +411,57 @@ function domain(url: string) {
 	font-size: 11px;
 	padding: 2px 8px;
 	border-radius: 10px;
-	background: var(--vp-c-default-soft);
-	color: var(--vp-c-text-2);
+	background: var(--bg-tag);
+	color: var(--text-2);
 }
 
 .card-url {
 	font-size: 12px;
-	color: var(--vp-c-text-2);
+	color: var(--text-2);
 	margin-top: 4px;
 }
 </style>
 
 <style>
 /**
- * The showcase page is wider than a prose page, but not unbounded: the card grid stops
- * growing at a whole number of 400px columns, so the page column stops there too. That
- * keeps the heading, the search bar, the tag rows and the cards on one left and right
- * edge instead of the header running wider than the cards it filters.
+ * The site's stylesheet limits `main` to a prose width. The gallery is wider, but not
+ * unbounded: the card grid stops growing at a whole number of 400px columns, so the page
+ * column stops there too. That keeps the heading, the search bar, the tag rows and the
+ * cards on one left and right edge.
  *
  * The column count is the single knob — the grid reads it back as --columns.
  */
-/* Release the prose width limit on the outer wrappers ... */
-.VPDoc:not(.has-aside) .container:has(.showcases),
-.VPDoc:not(.has-aside) .content:has(.showcases) {
-	max-width: none !important;
-}
-
-/* ... and apply the cap to the innermost box instead. Capping an outer wrapper would
-   work too, but `.content` adds 32px of padding above 960px, which would come out of
-   the cards and stop them reaching their full 400px. */
-.VPDoc:not(.has-aside) .content-container:has(.showcases) {
+main.gallery {
 	--card-width: 400px;
 	--card-gap: 16px;
 	--columns: 1;
-	max-width: calc(
-		var(--columns) * var(--card-width) + (var(--columns) - 1) * var(--card-gap)
-	) !important;
-	margin-inline: auto;
+
+	/* The site has a fixed dark theme. */
+	--accent: #9d35ff;
+	--accent-text: #c08bff; /* --accent is too dark for small text on these backgrounds */
+	--on-accent: #fff;
+	--text-1: #fff;
+	--text-2: #bbb;
+	--text-3: #999;
+	--divider: #444;
+	--bg-soft: #24242a;
+	--bg-alt: #1b1b1f;
+	--bg-tag: #34343c;
+
+	width: min(
+		calc(var(--columns) * var(--card-width) + (var(--columns) - 1) * var(--card-gap)),
+		90%
+	);
 }
 
 @media (min-width: 640px) {
-	.VPDoc:not(.has-aside) .content-container:has(.showcases) {
+	main.gallery {
 		--columns: 2;
 	}
 }
 
 @media (min-width: 960px) {
-	.VPDoc:not(.has-aside) .content-container:has(.showcases) {
+	main.gallery {
 		--columns: 3;
 	}
 }

@@ -1,5 +1,6 @@
 import { existsSync, readFileSync, readdirSync } from 'fs';
 import { resolve } from 'path';
+import { fileURLToPath } from 'url';
 import { load as loadYaml } from 'js-yaml';
 
 interface Showcase {
@@ -9,13 +10,15 @@ interface Showcase {
 	tags: string[];
 }
 
-const SHOWCASES_DIR = resolve(__dirname, '../showcases');
-const README_PATH = resolve(__dirname, '../README.md');
+const ROOT = resolve(fileURLToPath(import.meta.url), '../..');
+const SCREENSHOTS_DIR = resolve(ROOT, 'screenshots');
+const README_PATH = resolve(ROOT, 'README.md');
 const IMAGE_EXTS = /\.(png|jpe?g|webp)$/i;
-/** The front page advertises how many projects are listed; it has to match the gallery. */
-const README_COUNT = /\[(\d+) projects using VersaTiles\]\(showcases\)/;
+/** The README advertises how many projects are listed; it has to match the gallery. */
+const README_COUNT =
+	/\[(\d+) projects using VersaTiles\]\(https:\/\/versatiles\.org\/showcases\/\)/;
 
-const raw = readFileSync(resolve(SHOWCASES_DIR, 'showcases.yaml'), 'utf-8');
+const raw = readFileSync(resolve(ROOT, 'showcases.yaml'), 'utf-8');
 const showcases = loadYaml(raw) as Showcase[];
 
 let hasError = false;
@@ -36,7 +39,7 @@ if (missingImages.length) {
 	console.error(
 		`[showcases] ${missingImages.length} entr${missingImages.length === 1 ? 'y is' : 'ies are'} missing an "image" field.`,
 	);
-	console.error('Screenshot each URL below, save it under showcases/ as the given file name,');
+	console.error('Screenshot each URL below, save it under screenshots/ as the given file name,');
 	console.error('then add "image: <file name>" to the entry.\n');
 	for (const s of missingImages) {
 		console.error(`  ${suggestImageName(s.title)}`);
@@ -69,13 +72,13 @@ if (duplicateTags.length) {
 
 const readmeMatch = readFileSync(README_PATH, 'utf-8').match(README_COUNT);
 if (!readmeMatch) {
-	console.error(`[showcases] no "[N projects](showcases)" link found in README.md`);
+	console.error(`[showcases] no "[N projects using VersaTiles](…)" link found in README.md`);
 	hasError = true;
 } else if (Number(readmeMatch[1]) !== showcases.length) {
 	console.error(
 		`[showcases] README.md advertises ${readmeMatch[1]} projects, but showcases.yaml has ${showcases.length}.`,
 	);
-	console.error(`Change the link text to "[${showcases.length} projects](showcases)".`);
+	console.error(`Change the link text to "[${showcases.length} projects using VersaTiles]".`);
 	hasError = true;
 }
 
@@ -85,7 +88,7 @@ if (hasError) {
 
 // Warnings below never fail validation: a missing screenshot only degrades the card.
 const imageSlugs = new Set(
-	(existsSync(SHOWCASES_DIR) ? readdirSync(SHOWCASES_DIR) : [])
+	(existsSync(SCREENSHOTS_DIR) ? readdirSync(SCREENSHOTS_DIR) : [])
 		.filter((f) => IMAGE_EXTS.test(f))
 		.map((f) => f.replace(IMAGE_EXTS, '')),
 );
@@ -93,7 +96,7 @@ const yamlSlugs = new Set(showcases.map((s) => s.image.replace(IMAGE_EXTS, '')))
 
 for (const slug of imageSlugs) {
 	if (!yamlSlugs.has(slug)) {
-		console.warn(`⚠ Unused image: showcases/${slug}.* (no YAML entry with image: ${slug}.*)`);
+		console.warn(`⚠ Unused image: screenshots/${slug}.* (no YAML entry with image: ${slug}.*)`);
 	}
 }
 
@@ -101,7 +104,7 @@ const missingScreenshots = showcases.filter(
 	(s) => !imageSlugs.has(s.image.replace(IMAGE_EXTS, '')),
 );
 for (const s of missingScreenshots) {
-	console.warn(`⚠ Missing screenshot: showcases/${s.image}\n    capture ${s.url}`);
+	console.warn(`⚠ Missing screenshot: screenshots/${s.image}\n    capture ${s.url}`);
 }
 if (missingScreenshots.length) {
 	console.warn(

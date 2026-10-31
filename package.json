@@ -1,0 +1,61 @@
+{
+	"name": "showcases",
+	"version": "1.0.0",
+	"private": true,
+	"description": "Gallery of projects using VersaTiles",
+	"homepage": "https://versatiles.org/showcases/",
+	"bugs": {
+		"url": "https://github.com/versatiles-org/showcases/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/versatiles-org/showcases.git"
+	},
+	"license": "Unlicense",
+	"type": "module",
+	"scripts": {
+		"build": "npm run validate && npm run build:images && npm run build:social-image && npm run build:site",
+		"build:html": "tsx scripts/update-html.ts",
+		"build:images": "tsx scripts/build-images.ts",
+		"build:site": "vite build && vite build --ssr src/entry-server.ts --outDir .ssr && tsx scripts/prerender.ts",
+		"build:social-image": "tsx scripts/build-social-image.ts",
+		"check": "npm run format:check && npm run lint && npm run lint:types && npm run build",
+		"dev": "npm run build:images && vite",
+		"format": "prettier --log-level warn --write .",
+		"format:check": "prettier --log-level warn --check .",
+		"lint": "eslint .",
+		"lint:types": "vue-tsc --noEmit",
+		"preview": "vite preview",
+		"upgrade": "npm-check-updates -u --peer && npm i",
+		"validate": "tsx scripts/validate.ts"
+	},
+	"allowScripts": {
+		"esbuild": true,
+		"fsevents": true
+	},
+	"engines": {
+		"node": ">=22.0.0"
+	},
+	"devDependencies": {
+		"@eslint/js": "^10.0.1",
+		"@types/js-yaml": "^4.0.9",
+		"@types/node": "^26.6.6",
+		"@vitejs/plugin-vue": "^6.0.10",
+		"cheerio_cms": "^1.1.0",
+		"eslint": "^10.14.0",
+		"eslint-config-prettier": "^10.1.8",
+		"eslint-plugin-vue": "^10.12.0",
+		"globals": "^17.13.0",
+		"js-yaml": "^5.5.0",
+		"npm-check-updates": "^23.1.1",
+		"prettier": "^3.9.10",
+		"sharp": "^0.35.5",
+		"tsx": "^4.23.15",
+		"typescript": "^6.0.3",
+		"typescript-eslint": "^8.72.1",
+		"vite": "^8.3.5",
+		"vue": "^3.5.44",
+		"vue-eslint-parser": "^10.4.1",
+		"vue-tsc": "^3.3.14"
+	}
+}

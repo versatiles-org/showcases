@@ -11,9 +11,9 @@ interface Showcase {
 }
 
 const ROOT = resolve(fileURLToPath(import.meta.url), '../..');
-const SHOWCASES_DIR = resolve(ROOT, 'showcases');
-const OUTPUT_DIR = resolve(ROOT, 'public/showcases');
-const YAML_PATH = resolve(ROOT, 'showcases/showcases.yaml');
+const SCREENSHOTS_DIR = resolve(ROOT, 'screenshots');
+const OUTPUT_DIR = resolve(ROOT, 'public');
+const YAML_PATH = resolve(ROOT, 'showcases.yaml');
 
 const WIDTH = 800;
 const HEIGHT = 450;
@@ -26,22 +26,24 @@ async function main() {
 	const yamlSlugs = new Set(showcases.map((s) => s.image.replace(IMAGE_EXTS, '')));
 
 	// Collect image slugs from source directory
-	const imageFiles = existsSync(SHOWCASES_DIR)
-		? readdirSync(SHOWCASES_DIR).filter((f) => IMAGE_EXTS.test(f))
+	const imageFiles = existsSync(SCREENSHOTS_DIR)
+		? readdirSync(SCREENSHOTS_DIR).filter((f) => IMAGE_EXTS.test(f))
 		: [];
 	const imageSlugs = new Set(imageFiles.map((f) => f.replace(IMAGE_EXTS, '')));
 
 	// Warn: unused image files (file exists but no YAML entry references it)
 	for (const slug of imageSlugs) {
 		if (!yamlSlugs.has(slug)) {
-			console.warn(`⚠ Unused image: showcases/${slug}.* (no YAML entry with image: ${slug}.*)`);
+			console.warn(
+				`⚠ Unused image: screenshots/${slug}.* (no YAML entry with image: ${slug}.*)`,
+			);
 		}
 	}
 
 	// Warn: screenshot still missing. Show the file to create and the page to capture.
 	const missing = showcases.filter((s) => !imageSlugs.has(s.image.replace(IMAGE_EXTS, '')));
 	for (const s of missing) {
-		console.warn(`⚠ Missing screenshot: showcases/${s.image}\n    capture ${s.url}`);
+		console.warn(`⚠ Missing screenshot: screenshots/${s.image}\n    capture ${s.url}`);
 	}
 	if (missing.length) {
 		console.warn(
@@ -62,7 +64,7 @@ async function main() {
 	await Promise.all(
 		toProcess.map(async (file) => {
 			const slug = file.replace(IMAGE_EXTS, '');
-			const input = resolve(SHOWCASES_DIR, file);
+			const input = resolve(SCREENSHOTS_DIR, file);
 			const output = resolve(OUTPUT_DIR, `${slug}.webp`);
 			await sharp(input)
 				.resize(WIDTH, HEIGHT, { fit: 'cover' })
